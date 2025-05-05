@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/edusuccess
+      - PGUSER=postgres
+      - PGPASSWORD=postgres
+      - PGHOST=db
+      - PGPORT=5432
+      - PGDATABASE=edusuccess
+      # Add your Stripe and PayPal keys as needed
+      # - STRIPE_SECRET_KEY=your_stripe_secret_key
+      # - VITE_STRIPE_PUBLIC_KEY=your_stripe_public_key
+      # - PAYPAL_CLIENT_ID=your_paypal_client_id
+      # - PAYPAL_CLIENT_SECRET=your_paypal_client_secret
+    volumes:
+      - .:/app
+      - /app/node_modules
+    restart: unless-stopped
+
+  db:
+    image: postgres:14-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=edusuccess
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
